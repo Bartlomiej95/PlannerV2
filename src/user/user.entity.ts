@@ -2,7 +2,7 @@ import {BaseEntity, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import {userRole} from "../utils/enums/userRole";
 
 @Entity()
-export class User extends BaseEntity{
+export class UserItem extends BaseEntity{
     @PrimaryGeneratedColumn('uuid')
     id: string
 

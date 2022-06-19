@@ -6,7 +6,7 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { TaskModule } from './task/task.module';
 import {TaskItem} from "./task/task.entity";
-import {User} from "./user/user.entity";
+import { UserItem} from "./user/user.entity";
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -16,7 +16,7 @@ import {User} from "./user/user.entity";
     "username": process.env.DB_USERNAME,
     "database": process.env.DB_DATABASE,
     "password": process.env.DB_PASSWORD,
-    "entities": [TaskItem, User],
+    "entities": [TaskItem, UserItem],
     "bigNumberStrings": false,
     "logging": true,
     "synchronize": true,

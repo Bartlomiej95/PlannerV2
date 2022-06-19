@@ -1,5 +1,5 @@
 import {Controller, Get, Inject, Param} from '@nestjs/common';
-import {User} from "./user.entity";
+import {UserItem} from "./user.entity";
 import {UserService} from "./user.service";
 
 @Controller('user')
@@ -12,7 +12,7 @@ export class UserController {
     @Get('/:userId')
     async getOneUser(
         @Param('userId') userId: string,
-    ): Promise<User>{
+    ): Promise<UserItem>{
         return this.userService.getOneUser(userId)
     }
 }
