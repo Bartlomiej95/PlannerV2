@@ -1,6 +1,7 @@
 import {BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import {UserItem} from "../user/user.entity";
-import {TaskI} from "./interfaces/task.interface";
+import {ProjectItem} from "../project/project.entity";
+import { TaskI } from "src/utils/interfaces/task.interface";
 
 @Entity()
 export class TaskItem extends BaseEntity implements TaskI{
@@ -33,4 +34,7 @@ export class TaskItem extends BaseEntity implements TaskI{
 
     @ManyToOne( type => UserItem, entity => entity.tasksId)
     userId: string
+
+    @ManyToOne(type => ProjectItem, entity => entity.tasksId)
+    projectId: string
 }

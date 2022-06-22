@@ -1,7 +1,7 @@
 import {Body, Controller, Delete, Get, Inject, Param, Post, Put} from '@nestjs/common';
 import {TaskService} from "./task.service";
 import {TaskItem} from "./task.entity";
-import {TaskI} from "./interfaces/task.interface";
+import {TaskI} from "../utils/interfaces/task.interface";
 
 @Controller('task')
 export class TaskController {

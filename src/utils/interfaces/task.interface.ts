@@ -8,4 +8,5 @@ export interface TaskI {
     isFinish: boolean,
     isActive: boolean,
     userId?: string,
+    projectId?: string,
 }

@@ -7,6 +7,8 @@ import { UserModule } from './user/user.module';
 import { TaskModule } from './task/task.module';
 import {TaskItem} from "./task/task.entity";
 import { UserItem} from "./user/user.entity";
+import { ProjectModule } from './project/project.module';
+import {ProjectItem} from "./project/project.entity";
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -16,11 +18,11 @@ import { UserItem} from "./user/user.entity";
     "username": process.env.DB_USERNAME,
     "database": process.env.DB_DATABASE,
     "password": process.env.DB_PASSWORD,
-    "entities": [TaskItem, UserItem],
+    "entities": [TaskItem, UserItem, ProjectItem],
     "bigNumberStrings": false,
     "logging": true,
     "synchronize": true,
-  }), UserModule, TaskModule ],
+  }), UserModule, TaskModule, ProjectModule ],
   controllers: [AppController],
   providers: [AppService],
 })
