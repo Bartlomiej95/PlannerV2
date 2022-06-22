@@ -1,8 +1,9 @@
-import {BaseEntity, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
-import {type} from "os";
+import {BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
+import {UserItem} from "../user/user.entity";
+import {TaskI} from "./interfaces/task.interface";
 
 @Entity()
-export class TaskItem extends BaseEntity{
+export class TaskItem extends BaseEntity implements TaskI{
     @PrimaryGeneratedColumn('uuid')
     id: string
 
@@ -21,13 +22,15 @@ export class TaskItem extends BaseEntity{
     @Column({ type: 'int'})
     categoryTask: string
 
-    @Column()
+    @Column( {default: false})
     isFinish: boolean
 
-    @Column()
+    @Column({ default: false})
     isActive: boolean
 
-    @Column({ type: 'int'})
+    @Column({ type: 'int', default: 0})
     taskActivationTime: number
 
+    @ManyToOne( type => UserItem, entity => entity.tasksId)
+    userId: string
 }

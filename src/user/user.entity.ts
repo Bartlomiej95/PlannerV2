@@ -1,5 +1,6 @@
-import {BaseEntity, Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {userRole} from "../utils/enums/userRole";
+import {TaskItem} from "../task/task.entity";
 
 @Entity()
 export class UserItem extends BaseEntity{
@@ -23,4 +24,7 @@ export class UserItem extends BaseEntity{
 
     @Column({default: userRole.TEST_USER})
     role: userRole
+
+    @OneToMany( type => TaskItem, entity => entity.userId)
+    tasksId: [string]
 }
