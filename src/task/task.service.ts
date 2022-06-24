@@ -8,7 +8,7 @@ export class TaskService {
         return await TaskItem.findOneOrFail({ where: { id} });
     }
 
-    async addTask(req: TaskItem): Promise<TaskItem> {
+    async addTask(req: TaskItem, projectId: string): Promise<TaskItem> {
 
         try{
             const newTask = new TaskItem();
@@ -21,6 +21,7 @@ export class TaskService {
             newTask.isFinish = false;
             newTask.isActive = false;
             newTask.taskActivationTime = 0;
+            newTask.projectId = projectId;
 
             await newTask.save();
 
