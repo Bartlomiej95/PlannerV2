@@ -16,8 +16,14 @@ export class UserItem extends BaseEntity{
     @Column({length: 50})
     surname: string
 
-    @Column({length: 100})
+    @Column({length: 200})
     password: string
+
+    @Column({
+        nullable: true,
+        default: null,
+    })
+    currentTokenId: string | null
 
     @Column()
     position: string

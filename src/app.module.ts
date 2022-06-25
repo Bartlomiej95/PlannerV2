@@ -9,6 +9,7 @@ import {TaskItem} from "./task/task.entity";
 import { UserItem} from "./user/user.entity";
 import { ProjectModule } from './project/project.module';
 import {ProjectItem} from "./project/project.entity";
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -22,7 +23,7 @@ import {ProjectItem} from "./project/project.entity";
     "bigNumberStrings": false,
     "logging": true,
     "synchronize": true,
-  }), UserModule, TaskModule, ProjectModule ],
+  }), UserModule, TaskModule, ProjectModule, AuthModule ],
   controllers: [AppController],
   providers: [AppService],
 })
