@@ -1,6 +1,9 @@
-import {Body, Controller, Delete, Get, Inject, Param, Post, Put} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards} from '@nestjs/common';
 import {ProjectService} from "./project.service";
 import {ProjectItem} from "./project.entity";
+import { AuthGuard } from '@nestjs/passport';
+import {UserObj} from "../utils/decorators/user-obj.decorator";
+import {UserItem} from "../user/user.entity";
 
 @Controller('project')
 export class ProjectController {
@@ -17,8 +20,9 @@ export class ProjectController {
     }
 
     @Post('/')
+    @UseGuards(AuthGuard('jwt'))
     addNewProject(
-        @Body() newProject: ProjectItem
+        @Body() newProject: ProjectItem,
     ): Promise<string>{
         return this.projectService.addNewProject(newProject)
     }
