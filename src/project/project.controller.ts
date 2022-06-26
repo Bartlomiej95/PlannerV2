@@ -1,9 +1,10 @@
-import {Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Inject, Param, Post, Put, SetMetadata, UseGuards} from '@nestjs/common';
 import {ProjectService} from "./project.service";
 import {ProjectItem} from "./project.entity";
-import { AuthGuard } from '@nestjs/passport';
-import {UserObj} from "../utils/decorators/user-obj.decorator";
-import {UserItem} from "../user/user.entity";
+import {AuthGuard} from '@nestjs/passport';
+import {RolesGuard} from "../utils/guards/roles.guard";
+import {userRole} from 'src/utils/enums/userRole';
+import {Roles} from 'src/utils/decorators/roles.decorator';
 
 @Controller('project')
 export class ProjectController {
@@ -13,14 +14,17 @@ export class ProjectController {
     }
 
     @Get('/:projectId')
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Roles(userRole.USER, userRole.ADMIN, userRole.FOUNDER)
     getOne(
         @Param('projectId') id: string
     ): Promise<ProjectItem>{
         return this.projectService.getOneProject(id)
     }
 
-    @Post('/')
-    @UseGuards(AuthGuard('jwt'))
+    @Post('/add')
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Roles(userRole.ADMIN, userRole.FOUNDER)
     addNewProject(
         @Body() newProject: ProjectItem,
     ): Promise<string>{
@@ -28,6 +32,8 @@ export class ProjectController {
     }
 
     @Put('/')
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Roles(userRole.ADMIN, userRole.FOUNDER)
     updateProject(
         @Body() updatedProjectData: ProjectItem
     ): Promise<string> {
@@ -35,6 +41,8 @@ export class ProjectController {
     }
 
     @Delete('/:projectId')
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @SetMetadata('roles', [userRole.ADMIN, userRole.FOUNDER])
     removeProject(
         @Param('projectId') id: string
     ): Promise<string>{

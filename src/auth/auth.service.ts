@@ -38,7 +38,7 @@ export class AuthService {
         try{
             console.log(req);
             const user = await UserItem.findOne({where: {
-                    // email: req.email,
+                    email: req.email,
                     password: hashPwd(req.password),
                 }});
             console.log(user);
