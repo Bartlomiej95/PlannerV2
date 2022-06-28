@@ -1,6 +1,7 @@
-import {BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {BaseEntity, Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {userRole} from "../utils/enums/userRole";
 import {TaskItem} from "../task/task.entity";
+import {ProjectItem} from "../project/project.entity";
 
 @Entity()
 export class UserItem extends BaseEntity{
@@ -31,6 +32,10 @@ export class UserItem extends BaseEntity{
     @Column({default: userRole.TEST_USER})
     role: userRole
 
-    @OneToMany( type => TaskItem, entity => entity.userId)
-    tasksId: [string]
+    @OneToMany( type => TaskItem, entity => entity.user)
+    tasks: [string]
+
+    @ManyToMany( type => ProjectItem, entity => entity.users)
+    @JoinTable()
+    projects: ProjectItem[]
 }

@@ -32,9 +32,9 @@ export class TaskItem extends BaseEntity implements TaskI{
     @Column({ type: 'int', default: 0})
     taskActivationTime: number
 
-    @ManyToOne( type => UserItem, entity => entity.tasksId)
-    userId: string
+    @ManyToOne( type => UserItem, entity => entity.tasks)
+    user: string
 
-    @ManyToOne(type => ProjectItem, entity => entity.tasksId)
-    projectId: string
+    @ManyToOne(type => ProjectItem, entity => entity.tasks)
+    project: string
 }

@@ -1,6 +1,7 @@
-import {BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {BaseEntity, Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {ProjectI} from "../utils/interfaces/project.interface";
 import {TaskItem} from "../task/task.entity";
+import {UserItem} from "../user/user.entity";
 
 @Entity()
 export class ProjectItem extends BaseEntity implements ProjectI{
@@ -32,6 +33,9 @@ export class ProjectItem extends BaseEntity implements ProjectI{
     @Column()
     scopeOfWork: string;
 
-    @OneToMany(type => TaskItem, entity => entity.projectId)
-    tasksId: [string];
+    @OneToMany(type => TaskItem, entity => entity.project)
+    tasks: [string];
+
+    @ManyToMany( type => UserItem, entity => entity.projects)
+    users: UserItem[];
 }

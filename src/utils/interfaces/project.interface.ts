@@ -8,5 +8,5 @@ export interface ProjectI {
     description: string,
     scopeOfWork: string,
     isFinished: boolean,
-    tasksId: [string],
+    tasks: [string],
 }
