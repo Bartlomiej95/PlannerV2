@@ -21,7 +21,7 @@ export class TaskService {
             newTask.isFinish = false;
             newTask.isActive = false;
             newTask.taskActivationTime = 0;
-            newTask.projectId = projectId;
+            newTask.project = projectId;
 
             await newTask.save();
 
@@ -45,7 +45,7 @@ export class TaskService {
             task.timeForTheTask = req.timeForTheTask
             task.brief = req.brief
             task.guidelines = req.guidelines
-            task.userId = req.userId
+            task.user = req.user
 
             await task.save();
 
@@ -73,4 +73,22 @@ export class TaskService {
         }
     }
 
+    async getTasksForLoggedUser(userId: string): Promise<TaskItem[] | null> {
+        try {
+            const tasks = await TaskItem.find({ where: {user: userId }});
+            return tasks;
+
+        } catch (e){
+            throw new Error('Oh noes Anbeliwybul')
+        }
+    }
+
+    async getAllTasks(): Promise<TaskItem[]> {
+        try{
+            const tasks = await TaskItem.find();
+            return tasks;
+        } catch (e){
+            throw new Error('Nie udało się pobrać zadań ')
+        }
+    }
 }

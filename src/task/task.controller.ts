@@ -1,9 +1,13 @@
-import {Body, Controller, Delete, Get, Inject, Param, Post, Put} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards} from '@nestjs/common';
 import {TaskService} from "./task.service";
 import {TaskItem} from "./task.entity";
 import {TaskI} from "../utils/interfaces/task.interface";
 import {ProjectItem} from "../project/project.entity";
 import {ProjectService} from "../project/project.service";
+import {AuthGuard} from "@nestjs/passport";
+import {RolesGuard} from "../utils/guards/roles.guard";
+import { Roles } from 'src/utils/decorators/roles.decorator';
+import {userRole} from "../utils/enums/userRole";
 
 @Controller('task')
 export class TaskController {
@@ -12,14 +16,35 @@ export class TaskController {
         @Inject(ProjectService) private projectService: ProjectService
     ) {
     }
+
     @Get('/:taskId')
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Roles(userRole.USER, userRole.ADMIN, userRole.FOUNDER)
     async getTask(
         @Param('taskId') taskId: string
     ): Promise<TaskItem> {
         return this.taskService.getOne(taskId)
     }
 
+    @Get('/user/:userId')
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Roles(userRole.USER, userRole.ADMIN, userRole.FOUNDER)
+    getTasksForLoggedUser(
+        @Param('userId') userId: string
+    ): Promise<TaskItem[]> {
+        return this.taskService.getTasksForLoggedUser(userId)
+    }
+
+    @Get('/all')
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Roles(userRole.ADMIN, userRole.FOUNDER)
+    async getAllTasks(): Promise<TaskItem[]> {
+        return this.taskService.getAllTasks()
+    }
+
     @Post('/add/:projectId')
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Roles(userRole.ADMIN, userRole.FOUNDER)
     async addTask(
         @Param('projectId') projectId: string,
         @Body() req: TaskItem
@@ -28,6 +53,8 @@ export class TaskController {
     }
 
     @Put('/')
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Roles(userRole.FOUNDER, userRole.ADMIN)
     async updateTask(
         @Body() req: TaskItem
     ): Promise<TaskItem>{
@@ -35,8 +62,10 @@ export class TaskController {
     }
 
     @Delete('/:taskId')
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Roles(userRole.FOUNDER, userRole.ADMIN)
     async deleteTask(
-        @Param('taksId') taskId: string
+        @Param('taskId') taskId: string
     ) {
         return this.taskService.deleteTask(taskId)
     }

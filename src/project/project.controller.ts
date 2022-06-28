@@ -22,6 +22,22 @@ export class ProjectController {
         return this.projectService.getOneProject(id)
     }
 
+    @Get()
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Roles(userRole.ADMIN, userRole.FOUNDER)
+    getAllProjects(): Promise<ProjectItem[]> {
+        return this.projectService.getAllProjects()
+    }
+
+    @Get('/user/:userId')
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Roles(userRole.USER, userRole.ADMIN, userRole.FOUNDER)
+    getProjectsForLoggedUser(
+        @Param('userId') userId: string
+    ): Promise<ProjectItem[]> {
+        return this.projectService.getProjectsForLoggedUser(userId)
+    }
+
     @Post('/add')
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @Roles(userRole.ADMIN, userRole.FOUNDER)
@@ -42,10 +58,11 @@ export class ProjectController {
 
     @Delete('/:projectId')
     @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @SetMetadata('roles', [userRole.ADMIN, userRole.FOUNDER])
+    @Roles(userRole.ADMIN, userRole.FOUNDER)
     removeProject(
         @Param('projectId') id: string
     ): Promise<string>{
         return this.projectService.removeProject(id)
     }
+
 }

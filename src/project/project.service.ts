@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {ProjectItem} from "./project.entity";
+import {UserItem} from "../user/user.entity";
+import {createQueryBuilder, getConnection, In} from "typeorm";
 
 @Injectable()
 export class ProjectService {
@@ -64,5 +66,28 @@ export class ProjectService {
             throw new Error(`Usuwanie projektu nie powiodło się`)
         }
         throw new Error('Method not implemented.');
+    }
+
+    async getProjectsForLoggedUser(userId: string): Promise<ProjectItem[]> {
+        try {
+            const projects = await createQueryBuilder('project')
+                .leftJoinAndSelect('project.users', 'users')
+                .where('users.id = :id', {id: userId})
+                .getMany() as ProjectItem[]
+            console.log(projects);
+            return projects;
+
+        } catch (e) {
+            throw new Error('Pobranie projektów nie powiodło się ')
+        }
+    }
+
+    async getAllProjects(): Promise<ProjectItem[]>{
+        try {
+            const projects = await ProjectItem.find();
+            return projects;
+        } catch (e) {
+            throw new Error('Pobranie projektów nie powiodło się.')
+        }
     }
 }
