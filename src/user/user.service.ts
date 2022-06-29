@@ -33,4 +33,12 @@ export class UserService {
             throw new Error('Rejestracja nie powiodła się ')
         }
     }
+
+    async getAllUsers(): Promise<UserItem[]> {
+        try {
+            return await UserItem.find();
+        } catch (e) {
+            throw new Error('Pobranie użytkowników nie powiodło się')
+        }
+    }
 }
