@@ -52,7 +52,7 @@ export class AuthService {
                 domain: 'localhost',
                 httpOnly: true,
             })
-                .json({ok: true});
+                .json({ok: true, user});
 
         }catch (e){
             return res.json({ error: e.message});

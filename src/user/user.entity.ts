@@ -1,7 +1,8 @@
-import {BaseEntity, Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {BaseEntity, Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {userRole} from "../utils/enums/userRole";
 import {TaskItem} from "../task/task.entity";
 import {ProjectItem} from "../project/project.entity";
+import {DepartmentItem} from "../department/department.entity";
 
 @Entity()
 export class UserItem extends BaseEntity{
@@ -38,4 +39,7 @@ export class UserItem extends BaseEntity{
     @ManyToMany( type => ProjectItem, entity => entity.users)
     @JoinTable()
     projects: ProjectItem[]
+
+    @ManyToOne(type => DepartmentItem, entity => entity.users)
+    department: string
 }
