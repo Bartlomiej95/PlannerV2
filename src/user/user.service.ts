@@ -1,29 +1,35 @@
-import { Injectable } from '@nestjs/common';
-import { UserItem } from "./user.entity";
+import {Injectable} from '@nestjs/common';
+import {InjectModel} from "@nestjs/mongoose";
+import {Model} from "mongoose";
+import {UserItem} from "./user.schema";
 import {RegisterDto} from "./dto/register.dto";
 import {hashPwd} from "../utils/hash-pwd";
+
 
 @Injectable()
 export class UserService {
 
+    constructor(
+        @InjectModel(UserItem.name) private userModel: Model<UserItem>) {}
+
     async getOneUser(id): Promise<UserItem> {
-        return await UserItem.findOneOrFail(id)
+        return await this.userModel.findById({id}).exec();
     }
 
     async register(newUser: RegisterDto): Promise<RegisterDto> {
         try {
-            const searchedUser = await UserItem.findOne({where: { email: newUser.email}})
+            const searchedUser = await this.userModel.findOne({ email: newUser.email})
 
             if(searchedUser){
                throw new Error('Użytkownik o takim emailu juz istnieje')
             }
 
-            const registerUser = await new UserItem();
-
-            registerUser.email = newUser.email;
-            registerUser.password = hashPwd(newUser.password);
-            registerUser.name = newUser.name;
-            registerUser.surname = newUser.surname;
+            const registerUser = await this.userModel.create({
+                email: newUser.email,
+                password: hashPwd(newUser.password),
+                name: newUser.name,
+                surname: newUser.surname,
+            })
 
             await registerUser.save();
 
@@ -36,7 +42,7 @@ export class UserService {
 
     async getAllUsers(): Promise<UserItem[]> {
         try {
-            return await UserItem.find();
+            return await this.userModel.find();
         } catch (e) {
             throw new Error('Pobranie użytkowników nie powiodło się')
         }

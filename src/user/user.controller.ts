@@ -1,5 +1,5 @@
 import {Body, Controller, Get, Inject, Param, Post, Put, UseGuards} from '@nestjs/common';
-import {UserItem} from "./user.entity";
+import {UserItem} from "./user.schema";
 import {UserService} from "./user.service";
 import {RegisterDto} from "./dto/register.dto";
 import {AuthGuard} from "@nestjs/passport";

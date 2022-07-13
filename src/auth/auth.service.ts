@@ -3,13 +3,19 @@ import { AuthLoginDto } from './dto/auth-login.dto';
 import {Response} from "express";
 import { v4 as uuid} from 'uuid';
 import { sign } from 'jsonwebtoken';
-import {UserItem} from "../user/user.entity";
+import {UserItem} from "../user/user.schema";
 import {hashPwd} from "../utils/hash-pwd";
 import {JwtPayload} from "./jwt.strategy";
+import {InjectModel} from "@nestjs/mongoose";
+import {Model} from "mongoose";
 
 
 @Injectable()
 export class AuthService {
+
+    constructor(@InjectModel(UserItem.name) private userModel: Model<UserItem>)
+     {
+    }
 
     private createToken(currentTokenId: string): {accessToken: string, expiresIn: number } {
         const payload: JwtPayload = { id: currentTokenId }
@@ -26,7 +32,7 @@ export class AuthService {
         let userWithThisToken = null;
         do {
             token = uuid();
-            userWithThisToken = await UserItem.findOne({ where: { currentTokenId: token }});
+            userWithThisToken = await this.userModel.findOne({ currentTokenId: token });
         } while(!!userWithThisToken);
         user.currentTokenId = token;
         await user.save();
@@ -36,15 +42,15 @@ export class AuthService {
 
     async login(req: AuthLoginDto, res: Response): Promise<any> {
         try{
-            console.log(req);
-            const user = await UserItem.findOne({where: {
+            const user = await this.userModel.findOne({where: {
                     email: req.email,
                     password: hashPwd(req.password),
                 }});
-            console.log(user);
+
             if(!user){
                 return res.json({error: 'Invalid login data'});
             }
+
             const token = await this.createToken(await this.generateToken(user));
 
             return res.cookie('jwt', token.accessToken, {

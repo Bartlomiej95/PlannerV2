@@ -1,9 +1,6 @@
 import {Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards} from '@nestjs/common';
 import {TaskService} from "./task.service";
-import {TaskItem} from "./task.entity";
-import {TaskI} from "../utils/interfaces/task.interface";
-import {ProjectItem} from "../project/project.entity";
-import {ProjectService} from "../project/project.service";
+import {TaskItem} from "./task.schema";
 import {AuthGuard} from "@nestjs/passport";
 import {RolesGuard} from "../utils/guards/roles.guard";
 import { Roles } from 'src/utils/decorators/roles.decorator';
@@ -12,8 +9,7 @@ import {userRole} from "../utils/enums/userRole";
 @Controller('task')
 export class TaskController {
     constructor(
-        @Inject(TaskService) private taskService: TaskService,
-        @Inject(ProjectService) private projectService: ProjectService
+        @Inject(TaskService) private taskService: TaskService
     ) {
     }
 

@@ -1,27 +1,33 @@
 import { Injectable } from '@nestjs/common';
-import {TaskItem} from "./task.entity";
+import {TaskItem} from "./task.schema";
+import {InjectModel} from "@nestjs/mongoose";
+import {Model} from "mongoose";
 
 @Injectable()
 export class TaskService {
 
+    constructor(@InjectModel(TaskItem.name) private taskModel: Model<TaskItem>) {
+    }
+
     async getOne(id: string): Promise<TaskItem> {
-        return await TaskItem.findOneOrFail({ where: { id} });
+        return await this.taskModel.findById(id).exec();
     }
 
     async addTask(req: TaskItem, projectId: string): Promise<TaskItem> {
 
         try{
-            const newTask = new TaskItem();
-            newTask.id = req.id;
-            newTask.categoryTask = req.categoryTask;
-            newTask.title = req.title;
-            newTask.timeForTheTask = req.timeForTheTask;
-            newTask.brief = req.brief;
-            newTask.guidelines = req.guidelines;
-            newTask.isFinish = false;
-            newTask.isActive = false;
-            newTask.taskActivationTime = 0;
-            newTask.project = projectId;
+            const newTask = await this.taskModel.create({
+                id: req.id,
+                categoryTask: req.categoryTask,
+                title: req.title,
+                timeForTheTask: req.timeForTheTask,
+                brief: req.brief,
+                guidelines: req.guidelines,
+                isFinish: false,
+                isActive: false,
+                taskActivationTime: 0,
+                project: projectId,
+            });
 
             await newTask.save();
 
@@ -33,23 +39,20 @@ export class TaskService {
     }
 
     async updateTask(req: TaskItem): Promise<TaskItem> {
-        const task = await TaskItem.findOneOrFail( { where: { id: req.id }})
 
-        if(!task) {
-            throw new Error('Nie ma takiego zadania')
-        }
+            try {
+            const updatedTask = await this.taskModel.findOneAndUpdate({ id: req.id}, {
+                title: req.title,
+                categoryTask: req.categoryTask,
+                timeForTheTask: req.timeForTheTask,
+                brief: req.brief,
+                guidelines: req.guidelines,
+                user: req.id,
+            });
 
-        try {
-            task.title = req.title
-            task.categoryTask = req.categoryTask
-            task.timeForTheTask = req.timeForTheTask
-            task.brief = req.brief
-            task.guidelines = req.guidelines
-            task.user = req.user
+            await updatedTask.save();
 
-            await task.save();
-
-            return task;
+            return updatedTask;
 
         } catch (e){
             throw new Error('Aktualizacja zadania nie powiodła się')
@@ -58,14 +61,10 @@ export class TaskService {
     }
 
     async deleteTask(taskId: string): Promise<string> {
-        const task = await TaskItem.findOneOrFail({ where: { id: taskId}})
-
-        if(!task){
-            throw new Error('Nie ma takiego zadania')
-        }
 
         try {
-            await task.remove()
+            const task = await this.taskModel.findOneAndRemove({ where: { id: taskId}})
+
             return task.title
 
         } catch (e){
@@ -75,7 +74,7 @@ export class TaskService {
 
     async getTasksForLoggedUser(userId: string): Promise<TaskItem[] | null> {
         try {
-            const tasks = await TaskItem.find({ where: {user: userId }});
+            const tasks = await this.taskModel.find({ where: {user: userId }});
             return tasks;
 
         } catch (e){
@@ -85,7 +84,7 @@ export class TaskService {
 
     async getAllTasks(): Promise<TaskItem[]> {
         try{
-            const tasks = await TaskItem.find();
+            const tasks = await this.taskModel.find();
             return tasks;
         } catch (e){
             throw new Error('Nie udało się pobrać zadań ')
