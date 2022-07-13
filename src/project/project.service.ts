@@ -1,93 +1,53 @@
 import { Injectable } from '@nestjs/common';
-import {ProjectItem} from "./project.entity";
-import {UserItem} from "../user/user.entity";
-import {createQueryBuilder, getConnection, In} from "typeorm";
+import {InjectModel} from "@nestjs/mongoose";
+import { Model } from 'mongoose';
+import {ProjectItem} from "./project.schema";
+import {UserItem} from "../user/user.schema";
 
 @Injectable()
 export class ProjectService {
-
-    async getOneProject(id: string): Promise<ProjectItem> {
-        try {
-            return await ProjectItem.findOneOrFail({ where: { id }})
-        } catch (e){
-            throw new Error('Nie znaleziono zadania o podanym id')
-        }
+    constructor(
+        @InjectModel('Project') private projectModel: Model<ProjectItem>,
+        @InjectModel(UserItem.name) private userModel: Model<UserItem>
+    ) {
     }
 
-    async addNewProject(newItem: ProjectItem): Promise<string> {
-        const newProject = new ProjectItem();
-        try {
-            newProject.title = newItem.title;
-            newProject.customer = newItem.customer;
-            newProject.deadline = newItem.deadline;
-            newProject.description = newItem.description;
-            newProject.duration = newItem.duration;
-            newProject.projectValue = newItem.projectValue;
-            newProject.scopeOfWork = newItem.scopeOfWork;
+    async getAllProjects(): Promise<ProjectItem[]> {
+        return this.projectModel.find();
+    }
 
-            await newProject.save();
+    async addNewProject(newProject): Promise<string> {
+        const { title, customer, deadline, duration, projectValue, description } = newProject.projectData;
 
-            return newProject.id;
+        try{
+            const project = await this.projectModel.create({
+                title,
+                customer,
+                deadline,
+                duration,
+                projectValue,
+                description,
+                users: [...newProject.usersId]
+            });
 
-        } catch (e){
+            await project.save();
+
+            const usersId = [...newProject.usersId];
+
+            //We need updated every users which is selected to added project - added to user.projects new id project
+            for(let i = 0; i < usersId.length; i++){
+                const user = await this.userModel.findOne({_id: newProject.usersId[i]});
+                user.projects.push(project._id);
+                await user.save();
+            }
+
+        } catch (e) {
             throw new Error('Dodawanie nowego projektu nie powiodło się')
         }
-    }
 
-    async updateProject(updatedProjectData: ProjectItem): Promise<string> {
-        try{
-            const updatedProjected = await ProjectItem.findOneOrFail({where:{id: updatedProjectData.id}});
-            updatedProjected.title = updatedProjectData.title;
-            updatedProjected.customer = updatedProjectData.customer;
-            updatedProjected.deadline = updatedProjectData.deadline;
-            updatedProjected.description = updatedProjectData.description;
-            updatedProjected.duration = updatedProjectData.duration;
-            updatedProjected.projectValue = updatedProjectData.projectValue;
-            updatedProjected.scopeOfWork = updatedProjectData.scopeOfWork;
 
-            await updatedProjected.save()
 
-            return updatedProjected.title;
 
-        }catch (e) {
-            throw new Error('Aktualizacja projektu nie powiodła się.');
-        }
-    }
-
-    async removeProject(id: string): Promise<string> {
-        try {
-            const removingProject = await ProjectItem.findOneOrFail({where: {id}})
-
-            await removingProject.remove();
-
-            return removingProject.title;
-
-        } catch (e){
-            throw new Error(`Usuwanie projektu nie powiodło się`)
-        }
-        throw new Error('Method not implemented.');
-    }
-
-    async getProjectsForLoggedUser(userId: string): Promise<ProjectItem[]> {
-        try {
-            const projects = await createQueryBuilder('project')
-                .leftJoinAndSelect('project.users', 'users')
-                .where('users.id = :id', {id: userId})
-                .getMany() as ProjectItem[]
-            console.log(projects);
-            return projects;
-
-        } catch (e) {
-            throw new Error('Pobranie projektów nie powiodło się ')
-        }
-    }
-
-    async getAllProjects(): Promise<ProjectItem[]>{
-        try {
-            const projects = await ProjectItem.find();
-            return projects;
-        } catch (e) {
-            throw new Error('Pobranie projektów nie powiodło się.')
-        }
+        return title;
     }
 }

@@ -1,10 +1,11 @@
-import {Body, Controller, Delete, Get, Inject, Param, Post, Put, SetMetadata, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, Inject, Post, UseGuards} from '@nestjs/common';
 import {ProjectService} from "./project.service";
-import {ProjectItem} from "./project.entity";
-import {AuthGuard} from '@nestjs/passport';
+import {AuthGuard} from "@nestjs/passport";
 import {RolesGuard} from "../utils/guards/roles.guard";
-import {userRole} from 'src/utils/enums/userRole';
-import {Roles} from 'src/utils/decorators/roles.decorator';
+import {userRole} from "../utils/enums/userRole";
+import {ProjectItem} from "./project.schema";
+import { Roles } from 'src/utils/decorators/roles.decorator';
+import {users} from "../../../frontend/src/store/Users/reducer";
 
 @Controller('project')
 export class ProjectController {
@@ -13,29 +14,11 @@ export class ProjectController {
     ) {
     }
 
-    @Get('/:projectId')
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @Roles(userRole.USER, userRole.ADMIN, userRole.FOUNDER)
-    getOne(
-        @Param('projectId') id: string
-    ): Promise<ProjectItem>{
-        return this.projectService.getOneProject(id)
-    }
-
-    @Get()
+    @Get('/all')
     @UseGuards(AuthGuard('jwt'), RolesGuard)
     @Roles(userRole.ADMIN, userRole.FOUNDER)
-    getAllProjects(): Promise<ProjectItem[]> {
-        return this.projectService.getAllProjects()
-    }
-
-    @Get('/user/:userId')
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @Roles(userRole.USER, userRole.ADMIN, userRole.FOUNDER)
-    getProjectsForLoggedUser(
-        @Param('userId') userId: string
-    ): Promise<ProjectItem[]> {
-        return this.projectService.getProjectsForLoggedUser(userId)
+    getAllProjects(): Promise<ProjectItem[]>{
+        return this.projectService.getAllProjects();
     }
 
     @Post('/add')
@@ -43,26 +26,7 @@ export class ProjectController {
     @Roles(userRole.ADMIN, userRole.FOUNDER)
     addNewProject(
         @Body() newProject: ProjectItem,
-    ): Promise<string>{
+    ): Promise<string> {
         return this.projectService.addNewProject(newProject)
     }
-
-    @Put('/')
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @Roles(userRole.ADMIN, userRole.FOUNDER)
-    updateProject(
-        @Body() updatedProjectData: ProjectItem
-    ): Promise<string> {
-        return this.projectService.updateProject(updatedProjectData)
-    }
-
-    @Delete('/:projectId')
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @Roles(userRole.ADMIN, userRole.FOUNDER)
-    removeProject(
-        @Param('projectId') id: string
-    ): Promise<string>{
-        return this.projectService.removeProject(id)
-    }
-
 }
