@@ -25,6 +25,9 @@ export class ProjectItem extends Document {
     users: [string];
 
     @Prop()
+    departments: [string];
+
+    @Prop()
     tasks: [string];
 
 }

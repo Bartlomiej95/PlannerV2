@@ -17,8 +17,8 @@ export class ProjectService {
     }
 
     async addNewProject(newProject): Promise<string> {
-        const { title, customer, deadline, duration, projectValue, description } = newProject.projectData;
-
+        const { title, customer, deadline, duration, projectValue, description, departments } = newProject.projectData;
+        console.log(newProject);
         try{
             const project = await this.projectModel.create({
                 title,
@@ -27,6 +27,7 @@ export class ProjectService {
                 duration,
                 projectValue,
                 description,
+                departments: newProject.selectedDepartmentsNames,
                 users: [...newProject.usersId]
             });
 
