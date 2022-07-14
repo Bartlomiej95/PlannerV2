@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Inject, Post, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, Inject, Param, Post, UseGuards} from '@nestjs/common';
 import {ProjectService} from "./project.service";
 import {AuthGuard} from "@nestjs/passport";
 import {RolesGuard} from "../utils/guards/roles.guard";
@@ -18,6 +18,15 @@ export class ProjectController {
     @Roles(userRole.ADMIN, userRole.FOUNDER)
     getAllProjects(): Promise<ProjectItem[]>{
         return this.projectService.getAllProjects();
+    }
+
+    @Get('/:userId')
+    @UseGuards(AuthGuard('jwt'))
+    @Roles(userRole.ADMIN, userRole.FOUNDER)
+    getProjectsForLoggedUser(
+        @Param('userId') userId: string
+    ) {
+        return this.projectService.getProjectsForLoggedUser(userId)
     }
 
     @Post('/add')

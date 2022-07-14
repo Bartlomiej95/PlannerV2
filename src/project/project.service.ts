@@ -44,10 +44,16 @@ export class ProjectService {
         } catch (e) {
             throw new Error('Dodawanie nowego projektu nie powiodło się')
         }
-
-
-
-
         return title;
     }
+    
+    async getProjectsForLoggedUser(usersId: string): Promise<ProjectItem[] | null>{
+        try {
+           return await this.projectModel.find({users: usersId });
+
+        } catch (e) {
+            throw new Error('Nie udało się pobrać projektów dla użytkownika')
+        }
+    }
+    
 }

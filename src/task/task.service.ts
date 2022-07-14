@@ -74,7 +74,7 @@ export class TaskService {
 
     async getTasksForLoggedUser(userId: string): Promise<TaskItem[] | null> {
         try {
-            const tasks = await this.taskModel.find({ where: {user: userId }});
+            const tasks = await this.taskModel.find({user: userId });
             return tasks;
 
         } catch (e){
