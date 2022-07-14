@@ -55,5 +55,13 @@ export class ProjectService {
             throw new Error('Nie udało się pobrać projektów dla użytkownika')
         }
     }
+
+    async getProject(id: string): Promise<ProjectItem>{
+        try {
+            return await this.projectModel.findOne({ _id: id});
+        }catch (e) {
+            throw new Error('Nie udało się pobrać projektu')
+        }
+    }
     
 }

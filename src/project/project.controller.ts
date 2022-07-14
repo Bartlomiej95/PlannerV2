@@ -20,6 +20,15 @@ export class ProjectController {
         return this.projectService.getAllProjects();
     }
 
+    @Get('/one/:id')
+    @UseGuards(AuthGuard('jwt'))
+    @Roles(userRole.ADMIN, userRole.FOUNDER)
+    getProject(
+        @Param('id') id: string
+    ): Promise<ProjectItem>{
+        return this.projectService.getProject(id);
+    }
+
     @Get('/:userId')
     @UseGuards(AuthGuard('jwt'))
     @Roles(userRole.ADMIN, userRole.FOUNDER)
