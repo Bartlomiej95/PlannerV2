@@ -5,7 +5,6 @@ import {RolesGuard} from "../utils/guards/roles.guard";
 import {userRole} from "../utils/enums/userRole";
 import {ProjectItem} from "./project.schema";
 import { Roles } from 'src/utils/decorators/roles.decorator';
-import {users} from "../../../frontend/src/store/Users/reducer";
 
 @Controller('project')
 export class ProjectController {

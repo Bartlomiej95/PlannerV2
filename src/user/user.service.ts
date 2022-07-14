@@ -17,6 +17,9 @@ export class UserService {
     }
 
     async register(newUser: RegisterDto): Promise<RegisterDto> {
+
+        const { email, name, surname, password } = newUser;
+
         try {
             const searchedUser = await this.userModel.findOne({ email: newUser.email})
 
@@ -25,11 +28,11 @@ export class UserService {
             }
 
             const registerUser = await this.userModel.create({
-                email: newUser.email,
-                password: hashPwd(newUser.password),
-                name: newUser.name,
-                surname: newUser.surname,
-            })
+                email,
+                password: hashPwd(password),
+                name,
+                surname,
+            });
 
             await registerUser.save();
 
