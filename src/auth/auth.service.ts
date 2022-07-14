@@ -42,10 +42,11 @@ export class AuthService {
 
     async login(req: AuthLoginDto, res: Response): Promise<any> {
         try{
-            const user = await this.userModel.findOne({where: {
+            const user = await this.userModel.findOne( {
                     email: req.email,
                     password: hashPwd(req.password),
-                }});
+                });
+            console.log(user);
 
             if(!user){
                 return res.json({error: 'Invalid login data'});
