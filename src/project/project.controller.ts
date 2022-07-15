@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Inject, Param, Post, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Inject, Param, Post, UseGuards} from '@nestjs/common';
 import {ProjectService} from "./project.service";
 import {AuthGuard} from "@nestjs/passport";
 import {RolesGuard} from "../utils/guards/roles.guard";
@@ -45,5 +45,14 @@ export class ProjectController {
         @Body() newProject: ProjectItem,
     ): Promise<string> {
         return this.projectService.addNewProject(newProject)
+    }
+
+    @Delete('/:projectId')
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Roles(userRole.ADMIN, userRole.FOUNDER)
+    removeProject(
+        @Param('projectId') id: string
+    ): Promise<string> {
+        return this.projectService.removeProject(id);
     }
 }

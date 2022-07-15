@@ -64,5 +64,23 @@ export class ProjectService {
             throw new Error('Nie udało się pobrać projektu')
         }
     }
+
+    async removeProject(id: string): Promise<string> {
+        try {
+            const removeProject = await this.projectModel.remove({_id: id});
+
+            const searchedUsers = await this.userModel.find({projects: id});
+
+            for(let i =0; i<searchedUsers.length; i++){
+                searchedUsers[i].projects.filter( item => item !== id);
+                await searchedUsers[i].save();
+            }
+
+            return removeProject.title;
+
+        } catch(e){
+
+        }
+    }
     
 }
