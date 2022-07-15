@@ -50,4 +50,12 @@ export class UserService {
             throw new Error('Pobranie użytkowników nie powiodło się')
         }
     }
+
+    async getAllUsersForProject(projectId): Promise<UserItem[] | []>{
+        try{
+            return await this.userModel.find({projects: {projectId}});
+        }catch(e){
+            throw new Error('Pobranie użytkowników nie powiodło się')
+        }
+    }
 }

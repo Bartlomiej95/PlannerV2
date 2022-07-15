@@ -13,28 +13,28 @@ export class TaskService {
         return await this.taskModel.findById(id).exec();
     }
 
-    async addTask(req: TaskItem, projectId: string): Promise<TaskItem> {
-
+    async addTask(req, projectId: string): Promise<TaskItem> {
+        const { title, brief, timeForTheTask, guidelines } = req.taskData;
         try{
+            console.log(title)
             const newTask = await this.taskModel.create({
-                id: req.id,
-                categoryTask: req.categoryTask,
-                title: req.title,
-                timeForTheTask: req.timeForTheTask,
-                brief: req.brief,
-                guidelines: req.guidelines,
+                title,
+                timeForTheTask,
+                brief,
+                guidelines,
                 isFinish: false,
                 isActive: false,
                 taskActivationTime: 0,
                 project: projectId,
             });
+            console.log(newTask);
 
             await newTask.save();
 
             return newTask;
 
         } catch (e) {
-            throw new Error('Dodawanie nowego użytkownika nie powiodło się ');
+            throw new Error('Dodawanie nowego zadania nie powiodło się ');
         }
     }
 
@@ -43,7 +43,6 @@ export class TaskService {
             try {
             const updatedTask = await this.taskModel.findOneAndUpdate({ id: req.id}, {
                 title: req.title,
-                categoryTask: req.categoryTask,
                 timeForTheTask: req.timeForTheTask,
                 brief: req.brief,
                 guidelines: req.guidelines,

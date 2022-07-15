@@ -29,6 +29,15 @@ export class UserController {
         return this.userService.getOneUser(userId)
     }
 
+    @Get('/all/:projectId')
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
+    @Roles(userRole.ADMIN, userRole.FOUNDER)
+    getAllUsersForProject(
+        @Param('projectId') projectId: string
+    ){
+        this.userService.getAllUsersForProject(projectId);
+    }
+
     @Post('/register')
     register(
         @Body() newUser: RegisterDto

@@ -1,11 +1,8 @@
 import {Prop, Schema, SchemaFactory} from "@nestjs/mongoose";
-import { uuid } from "uuidv4";
 import {Document} from "mongoose";
 
 @Schema()
 export class TaskItem extends Document{
-    @Prop({ required: true, type: uuid })
-    id: string;
 
     @Prop({ required: true})
     title: string;
@@ -18,9 +15,6 @@ export class TaskItem extends Document{
 
     @Prop( { required: true })
     timeForTheTask: number;
-
-    @Prop()
-    categoryTask: string;
 
     @Prop( {default: false})
     isFinish: boolean;
